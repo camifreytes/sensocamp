@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SensoCamp Campo</title>
+<style>
+  :root{
+    --bg:#f4f1e9; --panel:#fff; --panel-2:#faf8f2; --fg:#241f16; --fg-muted:#6b6355; --line:#e4ddcd;
+    --accent:#3f6e3a; --soil:#8a6a46;
+    --ok:#2f8f4e; --ok-soft:#e3f2e7; --warn:#c98a1a; --warn-soft:#f8eed5; --bad:#c0402f; --bad-soft:#f6e1dd;
+    --disp:"Georgia","Times New Roman",serif; --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){:root{
+    --bg:#15140f; --panel:#1f1d16; --panel-2:#1a1812; --fg:#f0ebdf; --fg-muted:#a79e8c; --line:#322e24;
+    --accent:#8fc182; --soil:#c49a6a; --ok:#6fcf87; --ok-soft:#1d2a1f; --warn:#e3b55a; --warn-soft:#2c2616; --bad:#e8806f; --bad-soft:#2d1b17;
+    color-scheme:dark;
+  }}
+  *{box-sizing:border-box} html,body{margin:0}
+  body{background:var(--bg);color:var(--fg);font-family:var(--body);line-height:1.5}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 18px 36px}
+  .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:18px 0 10px}
+  .brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+  .leaf{width:30px;height:30px;border-radius:8px;background:var(--accent);display:grid;place-items:center;color:#fff;font-weight:700}
+  .brand b{font-family:var(--disp);font-size:1.15rem} .brand span{display:block;font-size:.72rem;color:var(--fg-muted);margin-top:-2px}
+  .badge{display:flex;align-items:center;gap:7px;font-size:.72rem;font-weight:700;letter-spacing:.05em;border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:5px 11px}
+  .badge .d{width:8px;height:8px;border-radius:50%}
+  .badge.vivo{color:var(--ok)} .badge.vivo .d{background:var(--ok);animation:p 1.6s infinite}
+  .badge.demo{color:var(--soil)} .badge.demo .d{background:var(--soil)}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(47,143,78,.5)}70%{box-shadow:0 0 0 7px rgba(47,143,78,0)}100%{box-shadow:0 0 0 0 rgba(47,143,78,0)}}
+  .lotes{display:flex;gap:6px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px}
+  .lotes button{font-family:inherit;font-size:.82rem;font-weight:600;color:var(--fg-muted);background:none;border:none;padding:6px 14px;border-radius:999px;cursor:pointer}
+  .lotes button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--fg-muted);font-size:.82rem;padding-bottom:16px;border-bottom:1px solid var(--line)}
+  .meta b{color:var(--fg)}
+  .hero{margin:20px 0;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 20px 20px}
+  .hk{font-size:.74rem;text-transform:uppercase;letter-spacing:.09em;color:var(--fg-muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .hb{display:grid;grid-template-columns:1.1fr 1fr;gap:10px 28px;margin-top:8px}
+  @media(max-width:680px){.hb{grid-template-columns:1fr}}
+  .pick{display:flex;align-items:center;gap:16px}
+  .pick .e{font-size:2.6rem} .pick .n{font-family:var(--disp);font-size:2.3rem;line-height:1} .pick .s{color:var(--fg-muted);font-size:.9rem}
+  .alts{margin-top:10px;font-size:.86rem;color:var(--fg-muted)} .alts b{color:var(--fg)}
+  .why{display:flex;flex-direction:column;gap:7px;justify-content:center}
+  .why .r{display:flex;align-items:center;gap:9px;font-size:.88rem}
+  .dot{width:9px;height:9px;border-radius:50%} .dot.ok{background:var(--ok)} .dot.no{background:var(--bad)}
+  .why .l{color:var(--fg-muted)} .why .v{margin-left:auto;font-weight:600;font-variant-numeric:tabular-nums}
+  .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}
+  @media(max-width:720px){.g4{grid-template-columns:repeat(2,1fr)}}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 15px;display:flex;flex-direction:column;gap:8px}
+  .kpi .l{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg-muted)}
+  .kpi .n{font-family:var(--disp);font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums} .kpi .n i{font-style:normal;font-size:.8rem;color:var(--fg-muted)}
+  .pill{align-self:flex-start;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:999px}
+  .pill.OK{background:var(--ok-soft);color:var(--ok)} .pill.DUDOSO{background:var(--warn-soft);color:var(--warn)} .pill.FALLA{background:var(--bad-soft);color:var(--bad)}
+  .kpi svg{width:100%;height:34px}
+  h2{font-family:var(--disp);font-size:1.15rem;margin:26px 0 12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 4px 8px}
+  table{width:100%;border-collapse:collapse;font-size:.86rem} th,td{padding:9px 12px;text-align:center}
+  th{font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--fg-muted)} td:first-child,th:first-child{text-align:left}
+  tbody tr{border-top:1px solid var(--line)} .crop{font-weight:600} .crop small{display:block;color:var(--fg-muted);font-weight:400;font-size:.76rem}
+  .mk.ok{color:var(--ok);font-weight:700} .mk.no{color:var(--bad);font-weight:700} .mk small{color:var(--fg-muted);font-weight:400}
+  .vd{font-size:.72rem;font-weight:700;padding:3px 8px;border-radius:999px} .vd.si{background:var(--ok-soft);color:var(--ok)} .vd.no{background:var(--bad-soft);color:var(--bad)}
+  .charts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px} @media(max-width:620px){.charts{grid-template-columns:1fr}}
+  .chart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px 6px} .chart .t{font-size:.82rem;font-weight:600} .chart .s{font-size:.72rem;color:var(--fg-muted);margin-bottom:4px} .chart svg{width:100%;height:120px}
+  .foot{color:var(--fg-muted);font-size:.78rem;margin-top:26px;padding-top:14px;border-top:1px solid var(--line)} .foot b{color:var(--fg)} .foot code{background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><span class="leaf">🌱</span><span><b>SensoCamp</b><span>Monitoreo de suelo &amp; recomendación de cultivo</span></span></div>
+    <div class="lotes" id="lotes"></div>
+    <span class="badge demo" id="badge"><span class="d"></span><span id="badgeTxt">DATOS DE EJEMPLO</span></span>
+  </div>
+  <div id="app"></div>
+  <div class="foot">
+    <b>Cómo se conecta (IoT real):</b> el nodo montado en la maquinaria mide el suelo y el ESP32 <b>escribe</b> cada lectura en la base <b>Supabase</b> (<code>http.POST</code> a <code>.../rest/v1/lecturas</code>). Esta página <b>lee</b> de esa misma base (<code>fetch</code> a la misma URL y tabla). El sensor escribe, la página lee: se conectan a través de la base.<br>
+    <b>Nota:</b> datos de ejemplo para la demostración. Cuando la página se abre desde un servidor (no como archivo), se conecta en vivo a Supabase. Rangos de cultivos orientativos (a ajustar con datos del INTA).
+  </div>
+</div>
+
+<script>
+// ============ CONEXION CON SUPABASE (la base) ============
+const SUPABASE_URL="https://dglkfkjtoiuwyrbamffh.supabase.co";
+const SUPABASE_KEY="sb_publishable_WriDIJKqVoOUVDmNSbbl6Q_PwUJHasx";
+async function leerDeSupabase(loteId){
+  const r=await fetch(`${SUPABASE_URL}/rest/v1/lecturas?lote_id=eq.${loteId}&estado_general=eq.OK&order=creado_en.asc&select=creado_en,humedad_pct,ph,temp_c,luz_lux`,
+    {headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  return r.json();
+}
+// =========================================================
+
+// Datos de ejemplo (respaldo si no hay conexion / se abre como archivo)
+const meses=["May","Jun","Jul","Ago","Sep","Oct"];
+const DEMO={
+  norte:{nombre:"Lote Norte",ubic:"Pehuajó, Buenos Aires",fecha:"12 oct 2026",
+    humedad:[58,54,50,48,46,46],ph:[6.2,6.3,6.3,6.4,6.4,6.4],temp:[12,11,10,12,14,15],luz:[38,32,30,35,40,42],
+    est:{hum:"OK",ph:"OK",temp:"OK",luz:"OK"}},
+  sur:{nombre:"Lote Sur",ubic:"Pehuajó, Buenos Aires",fecha:"12 oct 2026",
+    humedad:[70,68,66,65,64,65],ph:[6.5,6.5,6.6,6.6,6.6,6.6],temp:[13,12,12,14,16,17],luz:[42,39,36,41,45,47],
+    est:{hum:"OK",ph:"OK",temp:"OK",luz:"DUDOSO"}}
+};
+const CULTIVOS=[
+  {nombre:"Soja",emoji:"🫘",ph:[6.0,7.0],hum:[50,80],tmin:14,nota:"Sensible a suelos ácidos"},
+  {nombre:"Maíz",emoji:"🌽",ph:[5.8,7.0],hum:[50,80],tmin:10,nota:"Necesita buena humedad en siembra"},
+  {nombre:"Girasol",emoji:"🌻",ph:[6.0,7.5],hum:[40,70],tmin:8,nota:"Tolera menos humedad"},
+  {nombre:"Trigo",emoji:"🌾",ph:[6.0,7.5],hum:[40,70],tmin:4,nota:"Cultivo de invierno"}
+];
+const COLORS={humedad:"#3f82c4",ph:"#8a6a46",temp:"#c0402f",luz:"#c98a1a"};
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const last=a=>a[a.length-1], enRango=(v,[a,b])=>v>=a&&v<=b;
+
+let VIVO=false, actual="norte";
+
+// Al cargar: intenta Supabase en vivo (lote 1 -> Norte). Si falla, usa ejemplo.
+(async function init(){
+  try{
+    const rows=await leerDeSupabase(1);
+    if(rows && rows.length>=2){
+      DEMO.norte.humedad=rows.map(r=>+r.humedad_pct);
+      DEMO.norte.ph=rows.map(r=>+r.ph);
+      DEMO.norte.temp=rows.map(r=>+r.temp_c);
+      DEMO.norte.luz=rows.map(r=>+r.luz_lux/1000);
+      DEMO.norte._fechas=rows.map(r=>new Date(r.creado_en).toLocaleDateString("es-AR",{day:"2-digit",month:"short"}));
+      DEMO.norte.nombre="Lote (Supabase)"; DEMO.norte.fecha=last(DEMO.norte._fechas);
+      VIVO=true;
+    }
+  }catch(e){ VIVO=false; }
+  const b=document.getElementById("badge"), bt=document.getElementById("badgeTxt");
+  if(VIVO){ b.className="badge vivo"; bt.textContent="EN VIVO · SUPABASE"; }
+  else { b.className="badge demo"; bt.textContent="DATOS DE EJEMPLO"; }
+  // botones de lote
+  const le=document.getElementById("lotes");
+  Object.keys(DEMO).forEach(id=>{const btn=document.createElement("button");btn.textContent=DEMO[id].nombre;btn.dataset.id=id;btn.onclick=()=>{actual=id;render();};le.appendChild(btn);});
+  render();
+})();
+
+function render(){
+  const L=DEMO[actual];
+  const hum=L.humedad,ph=L.ph,temp=L.temp,luz=L.luz;
+  const fechas=L._fechas||meses;
+  const h=last(hum),p=last(ph),t=last(temp),lz=last(luz);
+  const ev=CULTIVOS.map(c=>{const okPh=enRango(p,c.ph),okHum=enRango(h,c.hum),okT=t>=c.tmin;return{...c,okPh,okHum,okT,apto:okPh&&okHum&&okT};});
+  const aptos=ev.filter(c=>c.apto),top=aptos[0],ref=top||ev[0];
+  const kpi=(l,v,u,s,est,k)=>`<div class="kpi"><span class="l">${l}</span><span class="n">${v}<i> ${u}</i></span><span class="pill ${est}">${est}</span>${spark(s,COLORS[k])}</div>`;
+  const why=[["pH del suelo",p.toFixed(1),ref.okPh],["Humedad",h.toFixed(0)+" %",ref.okHum],["Temperatura",t.toFixed(0)+" °C",ref.okT]];
+
+  document.getElementById("app").innerHTML=`
+  <div class="meta">
+    <span><b>${L.nombre}</b> · ${L.ubic}</span>
+    <span>Última medición: <b>${L.fecha}</b></span>
+    <span>Estado general: <span class="pill ${estadoGen(L.est)}">${estadoGen(L.est)}</span></span>
+  </div>
+  <div class="hero">
+    <div class="hk"><span>Recomendación de cultivo</span><span>${aptos.length} cultivo(s) apto(s)</span></div>
+    <div class="hb">
+      <div>
+        <div class="pick"><span class="e">${top?top.emoji:"⚠️"}</span><div><div class="n">${top?top.nombre:"Sin recomendación"}</div><div class="s">${top?top.nota:"Ningún cultivo cumple las 3 condiciones hoy"}</div></div></div>
+        <div class="alts">${top&&aptos.length>1?`También aptos: <b>${aptos.slice(1).map(c=>c.nombre).join(", ")}</b>`:(top?"Es el único cultivo apto con el suelo actual.":"")}</div>
+      </div>
+      <div class="why">${why.map(([l,v,ok])=>`<div class="r"><span class="dot ${ok?'ok':'no'}"></span><span class="l">${l}</span><span class="v">${v}</span></div>`).join("")}</div>
+    </div>
+  </div>
+  <div class="g4">
+    ${kpi("Humedad",h.toFixed(0),"%",hum,L.est.hum,"humedad")}
+    ${kpi("pH",p.toFixed(1),"",ph,L.est.ph,"ph")}
+    ${kpi("Temperatura",t.toFixed(0),"°C",temp,L.est.temp,"temp")}
+    ${kpi("Luz",lz.toFixed(0),"klux",luz,L.est.luz,"luz")}
+  </div>
+  <h2>¿Qué conviene sembrar?</h2>
+  <div class="card"><table>
+    <thead><tr><th>Cultivo</th><th>pH</th><th>Humedad</th><th>Temp.</th><th>Resultado</th></tr></thead>
+    <tbody>${ev.map(c=>`<tr>
+      <td class="crop">${c.emoji} ${c.nombre}<small>${c.nota}</small></td>
+      <td class="mk ${c.okPh?'ok':'no'}">${c.okPh?'✓':'✗'}<small><br>${c.ph[0]}–${c.ph[1]}</small></td>
+      <td class="mk ${c.okHum?'ok':'no'}">${c.okHum?'✓':'✗'}<small><br>${c.hum[0]}–${c.hum[1]}%</small></td>
+      <td class="mk ${c.okT?'ok':'no'}">${c.okT?'✓':'✗'}<small><br>≥${c.tmin}°C</small></td>
+      <td><span class="vd ${c.apto?'si':'no'}">${c.apto?'APTO':'NO'}</span></td></tr>`).join("")}</tbody>
+  </table></div>
+  <h2>Evolución del suelo</h2>
+  <div class="charts">
+    ${chart("Humedad","%",hum,COLORS.humedad,fechas)}
+    ${chart("pH","acidez",ph,COLORS.ph,fechas)}
+    ${chart("Temperatura","°C",temp,COLORS.temp,fechas)}
+    ${chart("Luz","klux",luz,COLORS.luz,fechas)}
+  </div>`;
+  [...document.getElementById("lotes").children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===actual));
+}
+function estadoGen(est){const o={OK:0,DUDOSO:1,FALLA:2};let w="OK";for(const k in est)if(o[est[k]]>o[w])w=est[k];return w;}
+function spark(s,color){if(s.length<2)s=[s[0]||0,s[0]||0];const w=150,h=34,p=3,mn=Math.min(...s),mx=Math.max(...s),rg=(mx-mn)||1;const pts=s.map((v,i)=>[p+i*(w-2*p)/(s.length-1),h-p-(v-mn)/rg*(h-2*p)]);const d=pts.map((q,i)=>(i?'L':'M')+q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' ');const e=pts[pts.length-1];return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${e[0].toFixed(1)}" cy="${e[1].toFixed(1)}" r="2.6" fill="${color}"/></svg>`;}
+function chart(tit,sub,s,color,fechas){const w=300,h=120,m={t:10,r:10,b:20,l:28};if(s.length<2)return `<div class="chart"><div class="t">${tit}</div><div class="s">${sub}</div></div>`;const mn=Math.min(...s),mx=Math.max(...s),pd=(mx-mn)*0.18||1,lo=mn-pd,hi=mx+pd,rg=hi-lo;const X=i=>m.l+i*(w-m.l-m.r)/(s.length-1),Y=v=>h-m.b-(v-lo)/rg*(h-m.t-m.b);const line=s.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ');const area=`M${X(0).toFixed(1)} ${h-m.b} `+s.map((v,i)=>'L'+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join(' ')+` L${X(s.length-1).toFixed(1)} ${h-m.b} Z`;const fg=css('--fg-muted'),ln=css('--line');let grid="";for(let i=0;i<=3;i++){const val=lo+rg*i/3,y=Y(val);grid+=`<line x1="${m.l}" x2="${w-m.r}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${ln}" stroke-width="0.5"/><text x="${m.l-5}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="8" fill="${fg}">${val.toFixed(rg<5?1:0)}</text>`;}const xl=fechas.map((f,i)=>`<text x="${X(i).toFixed(1)}" y="${h-6}" text-anchor="middle" font-size="8" fill="${fg}">${f}</text>`).join("");const dots=s.map((v,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="2.3" fill="${color}"/>`).join("");return `<div class="chart"><div class="t">${tit}</div><div class="s">${sub} — últimos muestreos</div><svg viewBox="0 0 ${w} ${h}">${grid}<path d="${area}" fill="${color}" opacity="0.10"/><path d="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}${xl}</svg></div>`;}
+</script>
+</body>
+</html>
