@@ -14,7 +14,6 @@ const leerLecturas=id=>sb(`lecturas?lote_id=eq.${id}&order=creado_en.asc&select=
 const leerProyeccion=(id,fecha)=>sb("rpc/proyeccion_siembra",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({p_lote:id,p_fecha:fecha})});
 // =========================================================
 
-const MODO_DEMO=new URLSearchParams(location.search).has("demo");
 const EMOJI={"Soja":"🫘","Maíz":"🌽","Girasol":"🌻","Trigo":"🌾"};
 const COLORS={humedad:"#3f82c4",ph:"#8a6a46",temp:"#c0402f",luz:"#c98a1a"};
 const MIN_LECTURAS_OK=2;
@@ -26,7 +25,7 @@ const fmtFL=d=>new Date(d).toLocaleDateString("es-AR",{day:"2-digit",month:"shor
 const tsOf=r=>new Date(r.nodo_ts||r.creado_en);
 const num=(v,d)=>(v==null||isNaN(v))?"—":(+v).toFixed(d);
 
-const S={vivo:false,demo:MODO_DEMO,error:null,cultivos:[],lotes:[],datos:{},actual:null,fsiembra:null,tokenProy:0};
+const S={vivo:false,error:null,cultivos:[],lotes:[],datos:{},actual:null,fsiembra:null,tokenProy:0};
 
 // ---------- analisis de las lecturas de un lote ----------
 const SENS=[["hum","humedad_pct",1],["ph","ph",1],["temp","temp_c",1],["luz","luz_lux",1000]];
@@ -75,9 +74,6 @@ const ordenar=ev=>ev.filter(c=>c.apto).sort((a,b)=>(b.margen-a.margen)||(b.media
 // ---------- inicio ----------
 (async function init(){
   const b=document.getElementById("badge"),bt=document.getElementById("badgeTxt");
-  if(MODO_DEMO){
-    cargarDemo(); b.className="badge demo"; bt.textContent="DATOS DE EJEMPLO (?demo=1)";
-  }else{
     try{
       const [cult,lotes]=await Promise.all([leerCultivos(),leerLotes()]);
       S.cultivos=cult.map(c=>({nombre:c.nombre,ph:[+c.ph_min,+c.ph_max],hum:[+c.hum_min,+c.hum_max],tmin:+c.temp_min_siembra,nota:c.notas||""}));
@@ -88,7 +84,7 @@ const ordenar=ev=>ev.filter(c=>c.apto).sort((a,b)=>(b.margen-a.margen)||(b.media
     }catch(e){
       S.error=e.message; b.className="badge off"; bt.textContent="SIN CONEXIÓN CON LA BASE";
     }
-  }
+  
   S.actual=S.lotes.length?S.lotes[0].id:null;
   const d=new Date();d.setDate(d.getDate()+21);S.fsiembra=d.toISOString().slice(0,10);
   const le=document.getElementById("lotes");
