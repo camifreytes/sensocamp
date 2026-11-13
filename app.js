@@ -28,24 +28,6 @@ const num=(v,d)=>(v==null||isNaN(v))?"—":(+v).toFixed(d);
 
 const S={vivo:false,demo:MODO_DEMO,error:null,cultivos:[],lotes:[],datos:{},actual:null,fsiembra:null,tokenProy:0};
 
-// ---------- datos de ejemplo: SOLO con ?demo=1 ----------
-function demoLote(id,nombre,hum,ph,temp,luz,estLuzUlt){
-  const meses=[4,5,6,7,8,9];
-  const rows=hum.map((h,i)=>({creado_en:new Date(2026,meses[i],12,10).toISOString(),humedad_pct:h,ph:ph[i],temp_c:temp[i],luz_lux:luz[i]*1000,
-    est_hum:"OK",est_ph:"OK",est_temp:"OK",est_luz:(i===hum.length-1&&estLuzUlt)||"OK",estado_general:"OK",observacion:"modo demo"}));
-  return {meta:{id,nombre:nombre+" (ejemplo)",ubicacion:"Pehuajó, Buenos Aires",latitud:null,longitud:null},rows};
-}
-function cargarDemo(){
-  S.cultivos=[
-    {nombre:"Soja",ph:[6.0,7.0],hum:[50,80],tmin:14,nota:"Sensible a suelos ácidos"},
-    {nombre:"Maíz",ph:[5.8,7.0],hum:[50,80],tmin:10,nota:"Necesita buena humedad en siembra"},
-    {nombre:"Girasol",ph:[6.0,7.5],hum:[40,70],tmin:8,nota:"Tolera menos humedad"},
-    {nombre:"Trigo",ph:[6.0,7.5],hum:[40,70],tmin:4,nota:"Cultivo de invierno"}];
-  const n=demoLote(1,"Lote Norte",[58,54,50,48,46,46],[6.2,6.3,6.3,6.4,6.4,6.4],[12,11,10,12,14,15],[38,32,30,35,40,42]);
-  const s=demoLote(2,"Lote Sur",[70,68,66,65,64,65],[6.5,6.5,6.6,6.6,6.6,6.6],[13,12,12,14,16,17],[42,39,36,41,45,47],"DUDOSO");
-  S.lotes=[n.meta,s.meta]; S.datos={1:n.rows,2:s.rows};
-}
-
 // ---------- analisis de las lecturas de un lote ----------
 const SENS=[["hum","humedad_pct",1],["ph","ph",1],["temp","temp_c",1],["luz","luz_lux",1000]];
 function analizar(rowsIn){
