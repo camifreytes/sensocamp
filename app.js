@@ -14,7 +14,6 @@ const leerLecturas=id=>sb(`lecturas?lote_id=eq.${id}&order=creado_en.asc&select=
 const leerProyeccion=(id,fecha)=>sb("rpc/proyeccion_siembra",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({p_lote:id,p_fecha:fecha})});
 // =========================================================
 
-const MODO_DEMO=new URLSearchParams(location.search).has("demo");
 const EMOJI={"Soja":"🫘","Maíz":"🌽","Girasol":"🌻","Trigo":"🌾"};
 const COLORS={humedad:"#3f82c4",ph:"#8a6a46",temp:"#c0402f",luz:"#c98a1a"};
 const MIN_LECTURAS_OK=2;
@@ -26,25 +25,7 @@ const fmtFL=d=>new Date(d).toLocaleDateString("es-AR",{day:"2-digit",month:"shor
 const tsOf=r=>new Date(r.nodo_ts||r.creado_en);
 const num=(v,d)=>(v==null||isNaN(v))?"—":(+v).toFixed(d);
 
-const S={vivo:false,demo:MODO_DEMO,error:null,cultivos:[],lotes:[],datos:{},actual:null,fsiembra:null,tokenProy:0};
-
-// ---------- datos de ejemplo: SOLO con ?demo=1 ----------
-function demoLote(id,nombre,hum,ph,temp,luz,estLuzUlt){
-  const meses=[4,5,6,7,8,9];
-  const rows=hum.map((h,i)=>({creado_en:new Date(2026,meses[i],12,10).toISOString(),humedad_pct:h,ph:ph[i],temp_c:temp[i],luz_lux:luz[i]*1000,
-    est_hum:"OK",est_ph:"OK",est_temp:"OK",est_luz:(i===hum.length-1&&estLuzUlt)||"OK",estado_general:"OK",observacion:"modo demo"}));
-  return {meta:{id,nombre:nombre+" (ejemplo)",ubicacion:"Pehuajó, Buenos Aires",latitud:null,longitud:null},rows};
-}
-function cargarDemo(){
-  S.cultivos=[
-    {nombre:"Soja",ph:[6.0,7.0],hum:[50,80],tmin:14,nota:"Sensible a suelos ácidos"},
-    {nombre:"Maíz",ph:[5.8,7.0],hum:[50,80],tmin:10,nota:"Necesita buena humedad en siembra"},
-    {nombre:"Girasol",ph:[6.0,7.5],hum:[40,70],tmin:8,nota:"Tolera menos humedad"},
-    {nombre:"Trigo",ph:[6.0,7.5],hum:[40,70],tmin:4,nota:"Cultivo de invierno"}];
-  const n=demoLote(1,"Lote Norte",[58,54,50,48,46,46],[6.2,6.3,6.3,6.4,6.4,6.4],[12,11,10,12,14,15],[38,32,30,35,40,42]);
-  const s=demoLote(2,"Lote Sur",[70,68,66,65,64,65],[6.5,6.5,6.6,6.6,6.6,6.6],[13,12,12,14,16,17],[42,39,36,41,45,47],"DUDOSO");
-  S.lotes=[n.meta,s.meta]; S.datos={1:n.rows,2:s.rows};
-}
+const S={vivo:false,error:null,cultivos:[],lotes:[],datos:{},actual:null,fsiembra:null,tokenProy:0};
 
 // ---------- analisis de las lecturas de un lote ----------
 const SENS=[["hum","humedad_pct",1],["ph","ph",1],["temp","temp_c",1],["luz","luz_lux",1000]];
@@ -93,9 +74,6 @@ const ordenar=ev=>ev.filter(c=>c.apto).sort((a,b)=>(b.margen-a.margen)||(b.media
 // ---------- inicio ----------
 (async function init(){
   const b=document.getElementById("badge"),bt=document.getElementById("badgeTxt");
-  if(MODO_DEMO){
-    cargarDemo(); b.className="badge demo"; bt.textContent="DATOS DE EJEMPLO (?demo=1)";
-  }else{
     try{
       const [cult,lotes]=await Promise.all([leerCultivos(),leerLotes()]);
       S.cultivos=cult.map(c=>({nombre:c.nombre,ph:[+c.ph_min,+c.ph_max],hum:[+c.hum_min,+c.hum_max],tmin:+c.temp_min_siembra,nota:c.notas||""}));
@@ -106,7 +84,7 @@ const ordenar=ev=>ev.filter(c=>c.apto).sort((a,b)=>(b.margen-a.margen)||(b.media
     }catch(e){
       S.error=e.message; b.className="badge off"; bt.textContent="SIN CONEXIÓN CON LA BASE";
     }
-  }
+  
   S.actual=S.lotes.length?S.lotes[0].id:null;
   const d=new Date();d.setDate(d.getDate()+21);S.fsiembra=d.toISOString().slice(0,10);
   const le=document.getElementById("lotes");
